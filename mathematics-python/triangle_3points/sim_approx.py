@@ -27,24 +27,23 @@ def is_center_in(theta_list):
     # test vec
     # 1
     vec_t = np.array([xc - x1, yc - y1])
-    flag = np.cross(vec_1, vec_t)
-    if flag == 0:
+    flag1 = np.cross(vec_1, vec_t)
+    if flag1 == 0:
         return True
     # 2
     vec_t = np.array([xc - x2, yc - y2])
-    flag = np.cross(vec_2, vec_t) * flag
-    if flag == 0:
+    flag2 = np.cross(vec_2, vec_t)
+    if flag2 == 0:
         return True
-    if flag < 0:
-        return False
     # 3
     vec_t = np.array([xc - x3, yc - y3])
-    flag = np.cross(vec_3, vec_t) * flag
-    if flag == 0:
+    flag3 = np.cross(vec_3, vec_t)
+    if flag3 == 0:
         return True
-    if flag < 0:
-        return False
-    return True
+    if (flag1 > 0 and flag2 > 0 and flag3 > 0) or \
+            (flag1 < 0 and flag2 < 0 and flag3 < 0):
+        return True
+    return False
 
 def main():
     CNT = 3000
