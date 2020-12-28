@@ -16,6 +16,10 @@ screen = pygame.display.set_mode((360, 240))
 fcclock = pygame.time.Clock()
 
 SCALE = 80
+FPS   = 10
+
+total_score = 0
+isin_socre  = 0
 
 def generate_1_point():
     # polar coordinates
@@ -58,16 +62,17 @@ def is_center_in(theta_list):
 def draw_static():
     pygame.draw.circle(screen,
                        (255, 255, 255),
-                       (360 // 2, 240 // 2),
+                       (360 // 3, 240 // 2),
                        R * SCALE,
                        3)
     pygame.draw.circle(screen,
                        (255, 255, 255),
-                       (360 // 2, 240 // 2),
+                       (360 // 3, 240 // 2),
                        5)
 
 def draw_dynamic(theta_list):
-    xc_draw = 360 // 2
+    global isin_socre
+    xc_draw = 360 // 3
     yc_draw = 240 // 2
     x1, y1 = polar_to_cartesian(theta_list[0])
     x2, y2 = polar_to_cartesian(theta_list[1])
@@ -77,6 +82,8 @@ def draw_dynamic(theta_list):
     x3, y3 = x3 * SCALE + xc_draw, y3 * SCALE + yc_draw
     # is in
     flag = is_center_in(theta_list)
+    if flag:
+        isin_socre += 1
     # draw
     r_point = 6
     l_width = 4
@@ -113,14 +120,58 @@ def draw_dynamic(theta_list):
                      (int(x1), int(y1)),
                      l_width)
 
+def draw_score():
+    global total_score
+    global isin_socre
+    WHITE = (255, 255, 255)
+    text_1 = pygame.font.Font('freesansbold.ttf', 30)
+    text_1_surface = text_1.render(str(isin_socre), True, WHITE)
+    text_1_rect    = text_1_surface.get_rect()
+    text_1_rect.center = (360 // 20 * 13, 240 // 10 * 4)
+    screen.blit(
+        text_1_surface,
+        text_1_rect
+    )
+    text_2 = pygame.font.Font('freesansbold.ttf', 30)
+    text_2_surface = text_2.render(str(total_score), True, WHITE)
+    text_2_rect    = text_2_surface.get_rect()
+    text_2_rect.center = (360 // 20 * 13, 240 // 10 * 6)
+    screen.blit(
+        text_2_surface,
+        text_2_rect
+    )
+    pygame.draw.line(screen,
+                     WHITE,
+                     (360 // 20 * 12, 240 // 10 * 5),
+                     (360 // 20 * 14, 240 // 10 * 5),
+                     3)
+    text_3 = pygame.font.Font('freesansbold.ttf', 30)
+    text_3_surface = text_3.render('=', True, WHITE)
+    text_3_rect    = text_3_surface.get_rect()
+    text_3_rect.center = (360 // 20 * 15, 240 // 10 * 5)
+    screen.blit(
+        text_3_surface,
+        text_3_rect
+    )
+    text_4 = pygame.font.Font('freesansbold.ttf', 30)
+    text_4_surface = text_4.render('{:.2f}'.format(isin_socre / total_score), True, WHITE)
+    text_4_rect    = text_4_surface.get_rect()
+    text_4_rect.center = (360 // 40 * 35, 240 // 50 * 31)
+    screen.blit(
+        text_4_surface,
+        text_4_rect
+    )
+
 def draw(theta_list):
     screen.fill((0, 0, 0))
     draw_static()
     draw_dynamic(theta_list)
-    fcclock.tick(3)
+    draw_score()
+    fcclock.tick(FPS)
     pygame.display.update()
 
 def main():
+    global total_score
     pygame.init()
     
     while True:
@@ -131,9 +182,8 @@ def main():
                 if event.key == K_ESCAPE:
                     sys.exit()
         theta_list = [generate_1_point() for _ in range(3)]
+        total_score += 1
         draw(theta_list)
-
-
 
 if __name__ == "__main__":
     main()
